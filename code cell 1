@@ -1,0 +1,45 @@
+import pandas as pd
+import math
+import random
+
+# Define a function to calculate the priority of a task
+def calculate_priority(task):
+    deadline = task["Deadline"]
+    importance = task["Importance"]
+    time_remaining = deadline - pd.Timestamp.now()
+    priority = (importance / time_remaining.total_seconds()) * 100
+    return priority
+
+# Define the list of tasks
+tasks = [
+    {"Activity": "Work on project", "Deadline": pd.Timestamp("2023-04-30 23:59:59"), "Importance": 9},
+    {"Activity": "Attend meeting", "Deadline": pd.Timestamp("2023-04-26 15:00:00"), "Importance": 7},
+    {"Activity": "Exercise", "Deadline": pd.Timestamp("2023-04-24 09:00:00"), "Importance": 8},
+    {"Activity": "Do laundry", "Deadline": pd.Timestamp("2023-04-24 16:00:00"), "Importance": 4},
+    {"Activity": "Buy groceries", "Deadline": pd.Timestamp("2023-04-25 12:00:00"), "Importance": 6},
+    {"Activity": "Clean room", "Deadline": pd.Timestamp("2023-04-26 18:00:00"), "Importance": 5}
+]
+
+# Assign a priority to each task
+for task in tasks:
+    priority = calculate_priority(task)
+    task["Priority"] = priority
+
+# Define a function to schedule the tasks
+def schedule_tasks(tasks):
+    # Create a priority queue using a list
+    priority_queue = []
+
+    # Add the tasks to the priority queue
+    for task in tasks:
+        priority = task["Priority"]
+        heapq.heappush(priority_queue, (priority, task))
+
+    # Schedule the tasks in order of their priority
+    while len(priority_queue) > 0:
+        priority, task = heapq.heappop(priority_queue)
+        print(f"Scheduled {task['Activity']}")
+        task["Completed"] = True
+
+# Schedule the tasks
+schedule_tasks(tasks)
